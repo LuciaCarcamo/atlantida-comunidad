@@ -1,0 +1,21 @@
+[
+  {"id_horario":"1","cod_iglesia":"atlantida","dia_misa":"Martes","horario_misa":"15:00","actividad_misa":"Exposición Santísimo","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"2","cod_iglesia":"atlantida","dia_misa":"Martes","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"3","cod_iglesia":"atlantida","dia_misa":"Viernes","horario_misa":"16:30","actividad_misa":"Rosario","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"4","cod_iglesia":"atlantida","dia_misa":"Viernes","horario_misa":"17:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"5","cod_iglesia":"atlantida","dia_misa":"Domingo","horario_misa":"10:00","actividad_misa":"Rosario","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"6","cod_iglesia":"atlantida","dia_misa":"Domingo","horario_misa":"10:30","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"7","cod_iglesia":"las-toscas","dia_misa":"Sábado","horario_misa":"15:30","actividad_misa":"Rosario","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"8","cod_iglesia":"las-toscas","dia_misa":"Sábado","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"9","cod_iglesia":"est-atlantida","dia_misa":"Domingo","horario_misa":"8:30","actividad_misa":"Rosario","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"10","cod_iglesia":"est-atlantida","dia_misa":"Domingo","horario_misa":"9:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"11","cod_iglesia":"est-atlantida","dia_misa":"2do Miércoles","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"12","cod_iglesia":"est-atlantida","dia_misa":"4to Miércoles","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"13","cod_iglesia":"pp-norte","dia_misa":"Domingo","horario_misa":"16:00","actividad_misa":"Exposición Santísimo","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"14","cod_iglesia":"pp-norte","dia_misa":"Domingo","horario_misa":"16:30","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"15","cod_iglesia":"pp-norte","dia_misa":"1er Miércoles","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"16","cod_iglesia":"pp-norte","dia_misa":"3er Miércoles","horario_misa":"16:00","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"17","cod_iglesia":"pp-sur","dia_misa":"Sábado","horario_misa":"16:00","actividad_misa":"Exposición Santísimo","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"18","cod_iglesia":"pp-sur","dia_misa":"Sábado","horario_misa":"16:30","actividad_misa":"Rosario","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"},
+  {"id_horario":"19","cod_iglesia":"pp-sur","dia_misa":"Sábado","horario_misa":"17:15","actividad_misa":"Misa","desde_vigencia_misa":"01-01-2026","hasta_vigencia_misa":"01-01-2050"}
+]

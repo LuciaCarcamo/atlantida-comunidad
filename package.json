@@ -1,0 +1,17 @@
+{
+  "name": "parroquia-web",
+  "version": "1.0.0",
+  "description": "Web de las comunidades de Atlántida, Las Toscas y Parque del Plata: horarios, grupos y avisos desde una planilla de Google.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.mjs",
+    "actualizar-respaldo": "node build.mjs --actualizar-respaldo",
+    "test": "node --test \"test/*.test.mjs\"",
+    "vista": "node servir.mjs"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}
