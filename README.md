@@ -1,7 +1,8 @@
-# Web de las comunidades (Atlántida, Estación Atlántida, Las Toscas, Parque del Plata)
+# Atlántida Comunidad (Estación Atlántida, Atlántida, Las Toscas, Parque del Plata)
 
-Sitio estático en español: horarios de misas, grupos y catequesis, avisos, una página por iglesia,
-botón para compartir por WhatsApp y QR para unirse a la comunidad. Los datos salen de una planilla de
+Sitio estático en español con estas páginas: **Inicio** (comunidades, mapas, secretaría y avisos), **Iglesias** (una página
+por comunidad), **Misas** (dónde hay misa hoy y en la semana, de todas las comunidades), **Caminos de fe** (todos los grupos)
+y **Unirme** (WhatsApp con QR). Cada iglesia usa un color de acento, burdeos o salvia, que se alternan solos. Los datos salen de una planilla de
 Google Sheets que edita quien administra; no hay servidor ni base de datos que mantener.
 
 ## Cómo funcionan los datos
@@ -38,11 +39,12 @@ Cada pestaña es una hoja. Se leen estos nombres de columna (en minúsculas, sin
 
 | Pestaña | Columnas obligatorias | Opcionales |
 |---|---|---|
-| Iglesias | `cod_iglesia`, `nombre_iglesia` | `localidad_iglesia`, `ubicacion_maps`, `direccion_iglesia`, `telefono_iglesia`, `horario_parroquial_iglesia`, `foto_iglesia`, `whatsapp_iglesia` |
+| Iglesias | `cod_iglesia`, `nombre_iglesia` | `localidad_iglesia`, `ubicacion_maps` (link de Google Maps), `desc_iglesia` (texto sobre la iglesia), `color_iglesia` (`burdeos` o `salvia`; si no, se alternan), `foto_iglesia`, `whatsapp_iglesia`, y si hace falta `direccion_iglesia`, `telefono_iglesia` |
 | Horarios_misas | `cod_iglesia`, `dia_misa`, `horario_misa` | `actividad_misa` (Misa, Rosario, etc.), `desde_vigencia_misa`, `hasta_vigencia_misa` |
 | Grupos | `cod_iglesia`, `grupo` | `dia_grupo`, `h_desde_grupo`, `h_hasta_grupo`, `desc_grupo`, `desde_vigencia_grupo`, `hasta_vigencia_grupo` |
 | Avisos | `desc_aviso` | `cod_iglesia` (vacío o `todas` = general), `titulo_aviso`, `fec_desde_aviso`, `fec_hasta_aviso` |
-| Config (opcional) | `clave`, `valor` | claves: `nombre_sitio`, `descripcion_sitio`, `url_sitio`, `whatsapp_comunidad`, `telefono_general` |
+| Secretaria | `direccion_secretaria` | `telefono_secretaria`, `horario_secretaria`, `desde_vigencia_secretaria`, `hasta_vigencia_secretaria` |
+| Config (opcional) | `clave`, `valor` | claves: `nombre_sitio`, `descripcion_sitio`, `url_sitio`, `whatsapp_comunidad`, `telefono_general`, `secretaria_localidad` |
 
 Las columnas `id_...` son para tu organización: la web no las usa ni las muestra.
 
@@ -61,7 +63,16 @@ Las columnas `id_...` son para tu organización: la web no las usa ni las muestr
 
 Los links publicados son públicos: no pongas datos privados en la planilla.
 
+## Mapas
+
+Cada iglesia usa el link de `ubicacion_maps`. Al armar el sitio se lee la ubicación detrás del link (también los links cortos
+`maps.app.goo.gl`) y la página muestra el botón **Ver mapa**, que carga el mapa recién al tocarlo, y **Cómo llegar**. Si no se
+puede leer la ubicación, queda solo "Cómo llegar" y el armado avisa. El mapa de la secretaría sale de su dirección más
+`secretaria_localidad` (por defecto "Atlántida, Canelones, Uruguay").
+
 ## Fotos
+
+La foto de la secretaría es `assets/img/secretaria.webp` (hoy una de Street View provisoria: reemplazarla por una propia).
 
 Poné las fotos en `assets/img/iglesias/` con el mismo nombre que `cod_iglesia`:
 `atlantida.jpg`, `est-atlantida.jpg`, `las-toscas.jpg`, `pp-sur.jpg`, `pp-norte.jpg` (también `.jpeg`, `.png`, `.webp`).
@@ -94,7 +105,7 @@ Cuando el sitio ya tenga dirección definitiva, completá `url_sitio` en `datos/
 
 ```
 build.mjs            arma dist/
-lib/                 fechas.mjs (reglas y próxima misa), datos.mjs (lectura de la planilla), plantillas.mjs (HTML)
+lib/                 fechas.mjs (reglas y próxima misa), datos.mjs (lectura de la planilla), mapas.mjs, plantillas.mjs (HTML)
 assets/              estilos.css, js/app.js, fonts/, img/iglesias/, favicon.svg
 datos/               config.json, fuentes.json, respaldo/*.json (copia de los datos)
 test/                pruebas de la lógica de fechas
@@ -103,4 +114,4 @@ test/                pruebas de la lógica de fechas
 
 Para refrescar la copia de respaldo con lo que hay hoy en Google: `npm run actualizar-respaldo`.
 
-Tipografías: Alegreya y Lexend (licencia OFL, incluidas en `assets/fonts/`).
+Tipografías: Lora e Inter (licencia OFL, incluidas en `assets/fonts/`).

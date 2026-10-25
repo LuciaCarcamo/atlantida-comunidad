@@ -8,11 +8,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
 import {
-  cargarHoja, normalizarIglesias, normalizarHorarios, normalizarGrupos, normalizarAvisos, normalizarConfig,
+  cargarHoja, normalizarIglesias, normalizarHorarios, normalizarGrupos, normalizarAvisos, normalizarConfig, normalizarSecretaria,
 } from './lib/datos.mjs';
+import { resolverMapas } from './lib/mapas.mjs';
 import { partesEnZona, fechaMasDias, isoDeFecha } from './lib/fechas.mjs';
 import { medidasImagen, formaFoto } from './lib/imagen.mjs';
-import { paginaInicio, paginaIglesia, paginaUnirse } from './lib/plantillas.mjs';
+import { paginaInicio, paginaMisas, paginaCaminos, paginaIglesia, paginaUnirse } from './lib/plantillas.mjs';
 
 const RAIZ = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(RAIZ, 'dist');
@@ -27,11 +28,12 @@ const fuentes = await leerJson('datos/fuentes.json');
 const dirRespaldo = path.join(RAIZ, 'datos', 'respaldo');
 const opciones = { dirRespaldo, avisos: advertencias, actualizarRespaldo };
 
-const [hIglesias, hHorarios, hGrupos, hAvisos, hConfig] = await Promise.all([
+const [hIglesias, hHorarios, hGrupos, hAvisos, hSecretaria, hConfig] = await Promise.all([
   cargarHoja('iglesias', fuentes.iglesias, opciones),
   cargarHoja('horarios', fuentes.horarios, opciones),
   cargarHoja('grupos', fuentes.grupos, opciones),
   cargarHoja('avisos', fuentes.avisos, opciones),
+  cargarHoja('secretaria', fuentes.secretaria, opciones),
   cargarHoja('config', fuentes.config, opciones),
 ]);
 
@@ -48,6 +50,7 @@ if (!iglesias.length) {
 const horarios = normalizarHorarios(hHorarios.filas, iglesias, advertencias);
 const grupos = normalizarGrupos(hGrupos.filas, iglesias, advertencias);
 const avisosTodos = normalizarAvisos(hAvisos.filas, iglesias, advertencias);
+const secretariaTodas = normalizarSecretaria(hSecretaria.filas, advertencias);
 
 // Fecha de hoy en Uruguay (o la de la variable HOY, para probar)
 const ahora = partesEnZona(config.zona_horaria);
@@ -62,12 +65,16 @@ const hoyIso = isoDeFecha(fechaHoy);
 const noVencido = (x) => !x.hasta || x.hasta >= hoyIso;
 const avisos = avisosTodos.filter(noVencido);
 const horariosNoVencidos = horarios.filter(noVencido);
+const secretaria = secretariaTodas.filter((s) => (!s.desde || s.desde <= hoyIso) && noVencido(s));
+
+// Mapas: coordenadas sacadas de los links de Google Maps (si no se puede, solo "Cómo llegar")
+const coordenadas = await resolverMapas(iglesias, { archivoCache: path.join(dirRespaldo, 'mapas.json'), avisos: advertencias });
 
 // Fotos: assets/img/iglesias/<cod_iglesia>.webp|jpg|jpeg|png (o el nombre indicado en la columna foto).
 // Se tolera mayúsculas y guion bajo en lugar de guion (las_toscas.png = las-toscas).
 const DIR_FOTOS = path.join(RAIZ, 'assets/img/iglesias');
 const normalizarNombre = (n) => n.toLowerCase().replace(/_/g, '-');
-const archivosFotos = new Map(readdirSync(DIR_FOTOS).map((f) => [normalizarNombre(f), f]));
+const archivosFotos = new Map([...readdirSync(DIR_FOTOS), ...readdirSync(path.join(RAIZ, 'assets/img'))].map((f) => [normalizarNombre(f), f]));
 const EXT = ['webp', 'jpg', 'jpeg', 'png'];
 const cacheFotos = new Map();
 function fotoDe(ig) {
@@ -91,6 +98,17 @@ for (const ig of iglesias) {
   if (formaFoto(f) === 'c') advertencias.push(`Foto de ${ig.cod}: es chica (${f.w}x${f.h}). Se muestra en tamaño reducido; una de al menos 1200 px de ancho se vería mejor.`);
 }
 
+// Foto de la secretaría: assets/img/secretaria.(webp|jpg|jpeg|png)
+const fotoSecretaria = (() => {
+  for (const e of EXT) {
+    const real = archivosFotos.get(`secretaria.${e}`);
+    if (!real) continue;
+    const datos = readFileSync(path.join(RAIZ, 'assets/img', real));
+    return { src: `img/${real}`, bytes: datos.length, ...(medidasImagen(datos) ?? {}) };
+  }
+  return null;
+})();
+
 let qrSvg = '';
 if (config.whatsapp_comunidad) {
   qrSvg = (await QRCode.toString(config.whatsapp_comunidad, {
@@ -99,7 +117,7 @@ if (config.whatsapp_comunidad) {
 }
 
 const ctx = {
-  config, iglesias, horarios, horariosNoVencidos, grupos, avisos, fechaHoy, hoyIso, fotoDe, qrSvg,
+  config, iglesias, horarios, horariosNoVencidos, grupos, avisos, secretaria, coordenadas, fotoSecretaria, fechaHoy, hoyIso, fotoDe, qrSvg,
   actualizado: `${dos(ahora.d)}/${dos(ahora.m)}/${ahora.y} ${dos(ahora.hh)}:${dos(ahora.mm)}`,
 };
 
@@ -117,6 +135,8 @@ const escribir = async (ruta, texto) => {
 };
 
 await escribir('index.html', paginaInicio(ctx));
+await escribir('misas/index.html', paginaMisas(ctx));
+await escribir('caminos-de-fe/index.html', paginaCaminos(ctx));
 for (const ig of iglesias) await escribir(`iglesias/${ig.cod}/index.html`, paginaIglesia(ctx, ig));
 if (config.whatsapp_comunidad) await escribir('unirse/index.html', paginaUnirse(ctx));
 await escribir('.nojekyll', '');
@@ -124,14 +144,15 @@ await escribir('.nojekyll', '');
 const url = (config.url_sitio || '').replace(/\/+$/, '');
 await escribir('robots.txt', `User-agent: *\nAllow: /\n${url ? `Sitemap: ${url}/sitemap.xml\n` : ''}`);
 if (url) {
-  const rutas = ['', ...iglesias.map((i) => `iglesias/${i.cod}/`), ...(config.whatsapp_comunidad ? ['unirse/'] : [])];
+  const rutas = ['', 'misas/', 'caminos-de-fe/', ...iglesias.map((i) => `iglesias/${i.cod}/`), ...(config.whatsapp_comunidad ? ['unirse/'] : [])];
   await escribir('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rutas.map((r) => `  <url><loc>${url}/${r}</loc></url>`).join('\n')}\n</urlset>\n`);
 }
 
 // Resumen
 const origen = (h) => h.origen;
 console.log(`Sitio armado en dist/ para el ${ctx.actualizado} (hoy = ${hoyIso})`);
-console.log(`  Iglesias: ${iglesias.length} (${origen(hIglesias)}), horarios: ${horarios.length} (${origen(hHorarios)}), grupos: ${grupos.length} (${origen(hGrupos)}), avisos: ${avisos.length} de ${avisosTodos.length} (${origen(hAvisos)})`);
+console.log(`  Iglesias: ${iglesias.length} (${origen(hIglesias)}), horarios: ${horarios.length} (${origen(hHorarios)}), grupos: ${grupos.length} (${origen(hGrupos)}), avisos: ${avisos.length} de ${avisosTodos.length} (${origen(hAvisos)}), secretaría: ${secretaria.length} (${origen(hSecretaria)})`);
+console.log(`  Mapas: ${Object.keys(coordenadas).length} de ${iglesias.filter((i) => i.maps).length}.`);
 console.log(`  Fotos: ${iglesias.filter((i) => fotoDe(i)).length} de ${iglesias.length}. WhatsApp de la comunidad: ${config.whatsapp_comunidad ? 'sí' : 'no cargado'}.`);
 if (advertencias.length) {
   console.log(`\nAdvertencias (${advertencias.length}):`);

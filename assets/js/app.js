@@ -62,7 +62,7 @@ function montarTablero(ahora) {
     const ig = porCod.get(h.cod);
     if (!ig) return '';
     const misa = /^misa/i.test(h.act);
-    return `<li class="salida${misa ? ' salida--misa' : ''}${paso ? ' salida--paso' : ''}"><span class="salida__hora">${formatoHora(h.min)}</span><div class="salida__info"><span class="salida__que">${esc(h.act)}</span><a class="salida__donde" href="iglesias/${esc(ig.cod)}/"><span class="salida__loc">${esc(ig.loc)}</span><span class="salida__iglesia">${esc(ig.nombre)}</span></a></div></li>`;
+    return `<li class="salida${misa ? ' salida--misa' : ''}${paso ? ' salida--paso' : ''}"><span class="salida__hora">${formatoHora(h.min)}</span><div class="salida__info"><span class="salida__que">${esc(h.act)}</span><a class="salida__donde" href="${esc(datos.base || '')}iglesias/${esc(ig.cod)}/"><span class="salida__loc">${esc(ig.loc)}</span><span class="salida__iglesia">${esc(ig.nombre)}</span></a></div></li>`;
   };
 
   const botones = fechas.map((f, i) => {
@@ -115,6 +115,44 @@ function activarCompartir() {
   });
 }
 
+/* ---------- Mapas: se cargan recién al tocar "Ver mapa" ---------- */
+function activarMapas() {
+  document.querySelectorAll('.mapa[data-mapa]').forEach((caja) => {
+    const boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'btn btn--sec btn--chico';
+    boton.textContent = 'Ver mapa';
+    boton.setAttribute('aria-expanded', 'false');
+    let marco = null;
+    boton.addEventListener('click', () => {
+      if (!marco) {
+        marco = document.createElement('div');
+        marco.className = 'mapa__marco';
+        const f = document.createElement('iframe');
+        f.src = caja.dataset.mapa;
+        f.title = caja.dataset.titulo || 'Mapa';
+        f.loading = 'lazy';
+        f.referrerPolicy = 'no-referrer-when-downgrade';
+        marco.append(f);
+        caja.prepend(marco);
+      }
+      const abierto = boton.getAttribute('aria-expanded') === 'false';
+      marco.hidden = !abierto;
+      boton.setAttribute('aria-expanded', String(abierto));
+      boton.textContent = abierto ? 'Ocultar mapa' : 'Ver mapa';
+    });
+    caja.querySelector('.mapa__ir')?.before(boton);
+  });
+}
+
+/* ---------- Menú Iglesias: se cierra al tocar afuera o con Escape ---------- */
+function activarMenu() {
+  const menu = document.querySelector('.menu-ig');
+  if (!menu) return;
+  document.addEventListener('click', (e) => { if (!menu.contains(e.target)) menu.open = false; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') menu.open = false; });
+}
+
 function activarImprimir() {
   document.querySelectorAll('[data-imprimir]').forEach((b) => b.addEventListener('click', () => window.print()));
 }
@@ -129,3 +167,5 @@ try {
 }
 activarCompartir();
 activarImprimir();
+activarMapas();
+activarMenu();
