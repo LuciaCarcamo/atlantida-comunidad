@@ -23,8 +23,8 @@
   --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --ancho: 68rem;
 }
-.tema-burdeos { --cab: #8A4B48; --acento: #8A4B48; --acento-osc: #6F3B38; --suave: #F1E7DA; }
-.tema-salvia { --cab: #5E7367; --acento: #5E7367; --acento-osc: #485A4F; --suave: #E6ECE7; }
+.tema-burdeos { --cab: #8A4B48; --acento: #8A4B48; --acento-osc: #6F3B38; --suave: #F1E7DA; --banda: #EDE2DE; --cab-suave: #E8DAD6; }
+.tema-salvia { --cab: #5E7367; --acento: #5E7367; --acento-osc: #485A4F; --suave: #E6ECE7; --banda: #E7E7E1; --cab-suave: #DFE3DC; }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 1rem; }
@@ -124,9 +124,12 @@ a { color: var(--acento-osc); }
 
 /* ---------- Inicio: filas con foto y mapa, como en la maqueta ---------- */
 .solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.inicio { padding-block: 1.5rem 1rem; }
-.filas { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.5rem; }
-.fila { display: grid; gap: 1rem; align-items: center; }
+.inicio { padding: 0; }
+.filas { list-style: none; margin: 0; padding: 0; }
+/* Cada iglesia en una franja de ancho completo, con un 12 % de su color; la secretaría en un tono neutro */
+.fila { background: var(--banda, #F1E7DA); padding-block: 2rem; }
+.fila--secretaria { --banda: #F1E7DA; }
+.fila__in { display: grid; gap: 1rem; align-items: center; }
 .fila__foto { display: flex; justify-content: center; }
 /* La foto se ve entera (sin recortar), con su forma: las verticales quedan más angostas */
 .fila__foto .foto { width: auto; max-width: 100%; height: auto; max-height: 28rem; border-radius: .8rem; box-shadow: 0 2px 8px rgba(43, 35, 34, .22); }
@@ -195,13 +198,12 @@ a { color: var(--acento-osc); }
 .btn--chico { min-height: 2.75rem; padding: .4rem 1rem; font-size: .98rem; }
 
 /* ---------- Página de una iglesia ---------- */
-.ig-cab { --anillo: #fff; background: var(--cab); color: #fff; }
-.ig-cab :focus-visible { outline-color: #fff; }
+.ig-cab { background: var(--cab-suave, #EDE2DE); color: var(--tinta); border-bottom: 3px solid var(--acento); }
 .ig-cab__foto { aspect-ratio: 16 / 9; max-height: 26rem; width: 100%; overflow: hidden; background: var(--suave); }
 .ig-cab__texto { padding-block: 1.5rem 2rem; }
-.ig-cab__loc { margin: 0 0 .25rem; font-size: 1.05rem; color: rgba(255, 255, 255, .88); }
+.ig-cab__loc { margin: 0 0 .25rem; font-size: 1.05rem; font-weight: 600; color: var(--acento-osc); }
 .ig-cab h1 { font: 700 clamp(1.9rem, 6.5vw, 3rem)/1.1 var(--f-titulo); margin: 0; max-width: 40rem; }
-.ig-cab__desc { background: var(--suave); color: var(--tinta); border-radius: .8rem; padding: 1rem 1.2rem; margin-top: 1.1rem; max-width: 42rem; }
+.ig-cab__desc { background: var(--papel); color: var(--tinta); border: 1px solid var(--linea); border-radius: .8rem; padding: 1rem 1.2rem; margin-top: 1.1rem; max-width: 42rem; }
 .ig-cab__desc p { margin: 0 0 .6rem; }
 .ig-cab__desc p:last-child { margin: 0; }
 /* Fotos verticales o chicas: se muestran dentro del ancho de la página, junto al título */
@@ -271,7 +273,8 @@ a { color: var(--acento-osc); }
 }
 
 @media (min-width: 760px) {
-  .fila { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; }
+  .fila { padding-block: 2.5rem; }
+  .fila__in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; }
   /* Una iglesia con la foto a la izquierda y la siguiente a la derecha; la secretaría siempre a la izquierda */
   .fila:nth-child(even):not(.fila--secretaria) .fila__foto { order: 2; }
   .mapa__marco iframe { height: 20rem; }
