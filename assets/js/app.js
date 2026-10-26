@@ -117,7 +117,21 @@ function activarCompartir() {
 
 /* ---------- Mapas: se cargan recién al tocar "Ver mapa" ---------- */
 function activarMapas() {
+  // En una computadora (pantalla ancha y mouse) el mapa se muestra solo; en el celular, al tocar "Ver mapa"
+  const compu = window.matchMedia('(min-width: 900px) and (hover: hover) and (pointer: fine)').matches;
   document.querySelectorAll('.mapa[data-mapa]').forEach((caja) => {
+    if (compu) {
+      const marco = document.createElement('div');
+      marco.className = 'mapa__marco';
+      const f = document.createElement('iframe');
+      f.src = caja.dataset.mapa;
+      f.title = caja.dataset.titulo || 'Mapa';
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      marco.append(f);
+      caja.prepend(marco);
+      return;
+    }
     const boton = document.createElement('button');
     boton.type = 'button';
     boton.className = 'btn btn--sec btn--chico';

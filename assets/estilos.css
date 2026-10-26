@@ -126,11 +126,13 @@ a { color: var(--acento-osc); }
 .solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .inicio { padding-block: 1.5rem 1rem; }
 .filas { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.5rem; }
-.fila { display: grid; gap: 1rem; align-items: start; }
-.fila__foto { display: block; border-radius: .8rem; overflow: hidden; background: var(--suave); }
-.fila__foto .foto { height: auto; max-height: 28rem; }
+.fila { display: grid; gap: 1rem; align-items: center; }
+.fila__foto { display: flex; justify-content: center; }
+/* La foto se ve entera (sin recortar), con su forma: las verticales quedan más angostas */
+.fila__foto .foto { width: auto; max-width: 100%; height: auto; max-height: 28rem; border-radius: .8rem; box-shadow: 0 2px 8px rgba(43, 35, 34, .22); }
+.fila__foto .foto--vacia { width: 100%; aspect-ratio: 4 / 3; }
 .fila__info h2 { font: 700 clamp(1.4rem, 4.5vw, 1.75rem)/1.2 var(--f-titulo); margin: 0 0 .3rem; }
-.fila__info h2 a { color: var(--acento-osc); text-decoration: none; }
+.fila__info h2 a { color: var(--tinta); text-decoration: none; }
 .fila__info h2 a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .fila__loc { display: flex; align-items: center; gap: .35rem; margin: 0; color: var(--tinta-2); font-weight: 600; }
 .pin { width: 1.15rem; height: 1.15rem; flex: none; color: var(--acento); }
