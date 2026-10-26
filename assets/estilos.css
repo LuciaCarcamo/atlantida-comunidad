@@ -277,6 +277,12 @@ a { color: var(--acento-osc); }
 @media (min-width: 760px) {
   .fila { padding-block: 2.5rem; }
   .fila__in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; }
+  /* Todas las fotos llenan el mismo recuadro: del ancho de su mitad y de la altura del texto y el mapa */
+  .fila__in { align-items: stretch; }
+  .fila__foto { position: relative; display: block; min-height: 22rem; }
+  .fila__foto .foto { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; }
+  .fila__foto .foto--v { object-position: center 30%; }
+  .fila__info { align-self: center; }
   /* Una iglesia con la foto a la izquierda y la siguiente a la derecha; la secretaría siempre a la izquierda */
   .fila:nth-child(even):not(.fila--secretaria) .fila__foto { order: 2; }
   .mapa__marco iframe { height: 20rem; }
