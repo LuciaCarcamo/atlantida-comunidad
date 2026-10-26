@@ -157,6 +157,8 @@ a { color: var(--acento-osc); }
 
 /* ---------- Mapas ---------- */
 .mapa { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
+/* Los botones ocupan todo el ancho del mapa */
+.mapa .btn { flex: 1 1 100%; }
 .mapa__marco { flex: 0 0 100%; border-radius: .6rem; overflow: hidden; border: 1px solid var(--linea); background: var(--suave); }
 .mapa__marco iframe { display: block; width: 100%; height: 18rem; border: 0; }
 
